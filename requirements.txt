@@ -1,0 +1,4 @@
+Flask==2.3.2
+pokemontcgsdk==3.4.0
+pypdf==3.13.0
+reportlab==4.0.4

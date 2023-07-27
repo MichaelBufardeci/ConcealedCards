@@ -1,0 +1,79 @@
+@font-face {
+    font-family: 'Concert One';
+    src: url('ConcertOne-Regular.ttf');
+    font-weight: 400;
+    font-style: regular;
+  }
+
+* {
+    box-sizing:border-box;
+}
+
+body {
+    color: oklch(10% 0 0);
+    background-color: oklch(98% 0 0);
+    font-family: "Concert One";
+    font-size: 1em;
+    width: 75vw;
+    height: 90vh;
+}
+
+body::selection {
+    background-color: oklch(47% 0.2 263);
+}
+
+header,
+form,
+footer {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-end;
+}
+
+form {
+    font-size: 1.1em;
+    row-gap: 1vh;
+}
+
+h1,
+input,
+textarea,
+p {
+    width: 50vw;
+}
+
+input,
+textarea {
+    font: inherit;
+    color: oklch(0% 0 0);
+    background-color: oklch(100% 0 0);
+    border: solid oklch(96% 0.2 110);
+    border-radius: 10px;
+}
+
+input:focus,
+textarea:focus {
+    outline-color: oklch(47% 0.2 263);
+    background-color: oklch(96% 0.2 110);
+}
+
+textarea {
+    height: 50vh;
+    vertical-align: top; 
+    resize: vertical;
+}
+
+a:link,
+a:visited {
+    color: oklch(47% 0.2 263);
+    text-decoration: none;
+}
+
+a:focus, 
+a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    font-size: 0.85em;
+}

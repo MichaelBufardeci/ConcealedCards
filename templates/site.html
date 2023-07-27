@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Pok&#233;mon Deck Registration Sheet Generator</title>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
+    </head>
+    <body>
+        <header>
+            <h1>Pok&#233;mon Deck Registration Sheet Generator</p>
+        </header>
+        <main>
+            <form action="{{ url_for('generate_decklist') }}" target="_blank" method="post" enctype=multipart/form-data>
+                <label>
+                    Player Name:
+                    <input type="text" name="playerName" autocomplete="name" placeholder="Samuel Oak">
+                </label>
+                <label>
+                    Player ID:
+                    <input type="text" name="playerId" placeholder="8675309">
+                </label>
+                <label>
+                    Date of Birth:
+                    <input type="date" name="playerBirthday" autocomplete="bday">
+                </label>
+                <label>
+                    Decklist:
+                    <textarea name="decklist" placeholder="Paste a decklist from Pok&#233;mon Live or a decklist database. Ensure that your paper cards match the printings in your decklist, as they often differ.&#10;Put each card on its own line. Cards must be in this format:&#10;(Quantity) (Name) (Set Code) (Collector Number)&#10;Cards not formatted this way may be ignored or registered improperly. See example decklist below.&#10;&#10;Pok&#233;mon: 5&#10;&#10;1 Exeggute JU 52&#10;4 Exeggutor JU 35&#10;&#10;Trainer: 12&#10;&#10;4 Bill BS 91&#10;4 Professor Oak BS 88&#10;4 Computer Search BS 71&#10;&#10;Energy: 43&#10;&#10;22 Grass Energy&#10;21 Psychic Energy"></textarea>
+                </label>
+                <input type="submit" value="Generate Deck Registration Sheet">
+            </form>
+        </main>
+        <footer>
+            <p>
+                Site created by Mike Bufardeci.
+                <br>
+                All data made available by the <a href="https://pokemontcg.io">Pok&#233;mon TCG API</a>.
+                <br>
+                Pok&#233;mon and Pok&#233;mon character names are trademarks of Nintendo. This website is not produced by, endorsed by, supported by, or affiliated with Pok&#233;mon, Nintendo, Game Freak, or Creatures.
+            </p>
+        </footer>
+    </body>
+</html>
