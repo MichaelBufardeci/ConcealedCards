@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Pok&#233;mon Deck Registration Sheet Generator</title>
-        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+        <title>Concealed Cards</title>
         <meta charset="utf-8" />
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'" />
+        <link rel="manifest" href="/manifest.webmanifest">
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="32x32">
+        <link rel="icon" href="{{ url_for('static', filename='icon.svg') }}" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
         <header>
-            <h1>Pok&#233;mon Deck Registration Sheet Generator</p>
+            <h1>
+                Concealed Cards
+                <br>
+                Pok&#233;mon Deck Registration Sheet Generator
+            </h1>
         </header>
         <main>
             <form action="{{ url_for('generate_decklist') }}" target="_blank" method="post" enctype=multipart/form-data>
@@ -26,14 +34,14 @@
                 </label>
                 <label>
                     Decklist:
-                    <textarea name="decklist" placeholder="Paste a decklist from Pok&#233;mon Live or a decklist database. Ensure that your paper cards match the printings in your decklist, as they often differ.&#10;Put each card on its own line. Cards must be in this format:&#10;(Quantity) (Name) (Set Code) (Collector Number)&#10;Cards not formatted this way may be ignored or registered improperly. See example decklist below.&#10;&#10;Pok&#233;mon: 5&#10;&#10;1 Exeggute JU 52&#10;4 Exeggutor JU 35&#10;&#10;Trainer: 12&#10;&#10;4 Bill BS 91&#10;4 Professor Oak BS 88&#10;4 Computer Search BS 71&#10;&#10;Energy: 43&#10;&#10;22 Grass Energy&#10;21 Psychic Energy"></textarea>
+                    <textarea name="decklist" placeholder="Paste a decklist from Pok&#233;mon Live or a decklist database. Ensure that your paper cards match the printings in your decklist, as they often differ.&#10;Put each card on its own line. Cards must be in this format:&#10;(Quantity) (Name) (Set Code) (Collector Number)&#10;Cards not formatted this way may be ignored or registered improperly. See example decklist below.&#10;&#10;Pok&#233;mon: 5&#10;&#10;1 Exeggute JU 52&#10;4 Exeggutor JU 35&#10;&#10;Trainer: 12&#10;&#10;4 Bill BS 91&#10;4 Professor Oak BS 88&#10;4 Computer Search BS 71&#10;&#10;Energy: 43&#10;&#10;22 Grass Energy PAL 1&#10;21 Psychic Energy PAL 5"></textarea>
                 </label>
                 <input type="submit" value="Generate Deck Registration Sheet">
             </form>
         </main>
         <footer>
             <p>
-                Site created by Mike Bufardeci.
+                Site created by Mike Bufardeci. You can support the site by <a href="https://ko-fi.com/ConcealedCards">buying me a pack</a> and by contributing updates or reporting issues on <a href="https://github.com/MichaelBufardeci/ConcealedCards">GitHub</a>.
                 <br>
                 All data made available by the <a href="https://pokemontcg.io">Pok&#233;mon TCG API</a>.
                 <br>

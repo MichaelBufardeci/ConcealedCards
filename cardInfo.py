@@ -31,13 +31,15 @@ class cardInfo:
             self.quantity = int(quantity)
         #ptcgl formats basic energy cards weird, we need to correct that
         if self.set == "ENERGY":
-            self.type = "Energy"
             self.name = self.name.removeprefix("Basic ")
-            energySymbols = {'G': "Grass", 'W': "Water", 'R': "Fire", 'L': "Lightning", 'P': "Psychic", 'F': "Fighting", 'D': "Darkness", 'M': "Metal", 'Y': "Fairy"}
+            energySymbols = {'G': "Grass", 'R': "Fire", 'W': "Water", 'L': "Lightning", 'P': "Psychic", 'F': "Fighting", 'D': "Darkness", 'M': "Metal", 'Y': "Fairy"}
             for symbol in energySymbols:
                 self.name = re.sub(f"{{{symbol}}}", f"{energySymbols[symbol]}", self.name)
             if not self.name.endswith(" Energy"):
                 self.name += " Energy"
+        #special treatment for basic energies
+        if self.name in ["Grass Energy", "Fire Energy", "Water Energy", "Lightning Energy", "Psychic Energy", "Fighting Energy", "Darkness Energy", "Metal Energy", "Fairy Energy"]:
+            self.set = "ENERGY"
         #limitless formats promos weird, we need to correct that
         if self.set.startswith("PR-"):
             self.collNo = ''.join([self.set.split('-')[-1], self.collNo.rjust(3, '0')])
