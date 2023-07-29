@@ -14,8 +14,6 @@ body {
     background-color: oklch(98% 0 0);
     font-family: "Concert One";
     font-size: 1em;
-    width: 75vw;
-    height: 90vh;
 }
 
 body::selection {
@@ -25,21 +23,14 @@ body::selection {
 header,
 form,
 footer {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: max(50vw, min(1000px, 95vw));
+    justify-content: center;
 }
 
 form {
     font-size: 1.1em;
-    row-gap: 1vh;
-}
-
-h1,
-input,
-textarea,
-p {
-    width: 50vw;
+    row-gap: 0.5em;
 }
 
 input,
@@ -49,6 +40,7 @@ textarea {
     background-color: oklch(100% 0 0);
     border: solid oklch(96% 0.2 110);
     border-radius: 10px;
+    width: 100%
 }
 
 input:focus,
