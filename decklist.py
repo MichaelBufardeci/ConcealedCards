@@ -1,6 +1,6 @@
 import re
 import logging
-from .cardInfo import cardInfo
+from cardInfo import cardInfo
 from io import BytesIO
 from os import path
 from pypdf import PdfWriter, PdfReader

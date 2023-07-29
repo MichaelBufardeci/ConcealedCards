@@ -1,7 +1,7 @@
 import os
 from io import BytesIO
 from flask import Flask, render_template, request, send_file, send_from_directory
-from .decklist import createDecklist
+from decklist import createDecklist
 
 app = Flask(__name__)
 
