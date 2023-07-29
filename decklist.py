@@ -49,13 +49,13 @@ def createDecklist(name = None, id = None, birthday = None, decklist = None):
     global _canvas, _pokemonY, _trainerY, _energyY
     filePath = path.realpath(path.dirname(__file__))
     #get API key
-    apiKey = None
-    with open(path.join(filePath, "API key.txt")) as reader:
-        apiKey = reader.read().strip()
-        #connect to API
-    if apiKey:
-        RestClient.configure(apiKey)
-    else:
+    apiPath = path.join(filePath, "APIkey.txt")
+    try:
+        with open(path.join(filePath, "APIkey.txt")) as reader:
+            apiKey = reader.read().strip()
+            #connect to API
+            RestClient.configure(apiKey)
+    except:
         logging.warning("API key not found")
     #create canvas for decklist
     packet = BytesIO()

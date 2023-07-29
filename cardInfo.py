@@ -2,6 +2,7 @@ import logging
 import re
 import sqlite3
 from functools import total_ordering
+from os import path
 from pokemontcgsdk import Card
 
 @total_ordering
@@ -57,7 +58,8 @@ class cardInfo:
         return self.getName() < other.getName()
 
     def dbLookup(self):
-        conn = sqlite3.connect("cards.db")
+        filePath = path.realpath(path.dirname(__file__))
+        conn = sqlite3.connect(path.join(filePath, "cards.db"))
         cursor = conn.cursor()
         query = "SELECT regMark, type, isStandardLegal, isExpandedLegal FROM cards WHERE "
         queryData = []
