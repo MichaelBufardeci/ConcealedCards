@@ -5,10 +5,6 @@
     font-style: regular;
   }
 
-* {
-    box-sizing:border-box;
-}
-
 body {
     color: oklch(10% 0 0);
     background-color: oklch(98% 0 0);
@@ -20,17 +16,21 @@ body::selection {
     background-color: oklch(47% 0.2 263);
 }
 
+span.websiteName {
+    color: oklch(20% 0.1 263);
+}
+
 header,
 form,
 footer {
     display: grid;
-    grid-template-columns: max(50vw, min(1000px, 95vw));
+    grid-template-columns: max(50vw, min(800px, 90vw));
     justify-content: center;
 }
 
 form {
     font-size: 1.1em;
-    row-gap: 0.5em;
+    row-gap: max(0.5em, 10px);
 }
 
 input,
@@ -41,6 +41,7 @@ textarea {
     border: solid oklch(96% 0.2 110);
     border-radius: 10px;
     width: 100%
+    
 }
 
 input:focus,
@@ -51,7 +52,6 @@ textarea:focus {
 
 textarea {
     height: 50vh;
-    vertical-align: top; 
     resize: vertical;
 }
 

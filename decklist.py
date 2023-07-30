@@ -25,6 +25,8 @@ def writeCard(cardInfo):
             y = _trainerY
         case "Energy":
             y = _energyY
+        case _:
+            return False
     #always write quantity and name
     _canvas.drawString(275, y, str(cardInfo.getQuantity()).rjust(2))
     _canvas.drawString(299, y, cardInfo.getName())
@@ -43,7 +45,7 @@ def writeCard(cardInfo):
             _trainerY -= lineHeight
         case "Energy":
             _energyY -= lineHeight
-    return
+    return True
 
 def createDecklist(name = None, id = None, birthday = None, decklist = None):
     global _canvas, _pokemonY, _trainerY, _energyY
@@ -107,10 +109,8 @@ def createDecklist(name = None, id = None, birthday = None, decklist = None):
         writeCard(card)
         if standardLegal and not card.getStandardLegality():
             standardLegal = False
-            print(f"{card.getName()} is not standard legal")
         if expandedLegal and not card.getExpandedLegality():
             expandedLegal = False
-            print(f"{card.getName()} is not expanded legal")
     formatY = 691
     if standardLegal:
         _canvas.drawString(175, formatY, '✓')

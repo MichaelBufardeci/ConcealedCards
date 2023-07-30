@@ -73,8 +73,6 @@ class cardInfo:
             queryData.append(self.set)
             queryData.append(self.collNo)
         if queryData:
-            print(query)
-            print(queryData)
             results = cursor.execute(query, tuple(queryData)).fetchall()
             if len(results) == 1:
                 self.regMark = results[0][0]
@@ -82,12 +80,14 @@ class cardInfo:
                 self.isStandardLegal = results[0][2]
                 self.isExpandedLegal = results[0][3]
                 conn.close()
-                return
-        self.apiLookup()
-        query = "INSERT INTO cards (name, setCode, collNo, regMark, type, isStandardLegal, isExpandedLegal) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        cursor.execute(query, (self.name, self.set, self.collNo, self.regMark, self.type, self.isStandardLegal, self.isExpandedLegal))
-        conn.commit()
+                return True
+        apiSuccess = self.apiLookup()
+        if apiSuccess:
+            query = "INSERT INTO cards (name, setCode, collNo, regMark, type, isStandardLegal, isExpandedLegal) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            cursor.execute(query, (self.name, self.set, self.collNo, self.regMark, self.type, self.isStandardLegal, self.isExpandedLegal))
+            conn.commit()
         conn.close()
+        return apiSuccess
 
     def apiLookup(self):
         #construct search query
@@ -123,6 +123,7 @@ class cardInfo:
                     search = f'!name:"{self.name}"'
                 else:
                     logging.error(f"Could not find! {search}")
+                    return False
             cards = Card.where(q=search, orderBy="-set.releaseDate")
         card = cards[0]
         if nameCheck and card.supertype == "Pokémon":
@@ -145,6 +146,7 @@ class cardInfo:
             self.isStandardLegal = card.legalities.standard == "Legal"
         if not self.isExpandedLegal:
             self.isExpandedLegal = card.legalities.expanded == "Legal"
+        return True
 
     def getName(self):
         if not self.name:
