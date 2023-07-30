@@ -40,8 +40,8 @@ textarea {
     background-color: oklch(100% 0 0);
     border: solid oklch(96% 0.2 110);
     border-radius: 10px;
-    width: 100%
-    
+    width: 100%;
+    height: clamp(min-content, auto, max-content); 
 }
 
 input:focus,
