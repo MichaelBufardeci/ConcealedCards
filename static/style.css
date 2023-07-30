@@ -31,6 +31,7 @@ footer {
 form {
     font-size: 1.1em;
     row-gap: max(0.5em, 10px);
+    grid-auto-rows: max(2em, auto);
 }
 
 input,
@@ -49,13 +50,11 @@ textarea:focus {
     background-color: oklch(96% 0.2 110);
 }
 
-input{
-    height: 20px;
-}
+
 
 textarea {
-    height: minmax(100px, 50vh);
     resize: vertical;
+    height: max(20em, 50vh);
 }
 
 a:link,
@@ -64,7 +63,7 @@ a:visited {
     text-decoration: none;
 }
 
-a:focus, 
+a:focus,
 a:hover {
     text-decoration: underline;
 }
