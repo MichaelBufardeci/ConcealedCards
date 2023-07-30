@@ -122,9 +122,8 @@ class cardInfo:
                     nameCheck = True
                     search = f'!name:"{self.name}"'
                 else:
-                    break
+                    logging.error(f"Could not find! {search}")
             cards = Card.where(q=search, orderBy="-set.releaseDate")
-        #this is the result, if it's still empty we get an error
         card = cards[0]
         if nameCheck and card.supertype == "Pokémon":
             logging.warning(f"{search} returned a pokemon")
