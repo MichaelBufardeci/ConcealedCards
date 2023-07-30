@@ -24,12 +24,11 @@ header,
 form,
 footer {
     display: grid;
-    grid-template-columns: max(50vw, min(800px, 90vw));
+    grid-template-columns: clamp(50vw, 800px, 90vw);
     justify-content: center;
 }
 
 form {
-    grid-template-rows: repeat(5, max-content);
     font-size: 1.1em;
     row-gap: max(0.5em, 10px);
 }
@@ -50,8 +49,12 @@ textarea:focus {
     background-color: oklch(96% 0.2 110);
 }
 
+input{
+    height: 100px;
+}
+
 textarea {
-    height: 50vh;
+    height: minmax(100px, 50vh);
     resize: vertical;
 }
 
