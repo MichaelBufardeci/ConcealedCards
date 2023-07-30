@@ -29,6 +29,7 @@ footer {
 }
 
 form {
+    grid-template-rows: repeat(5, auto);
     font-size: 1.1em;
     row-gap: max(0.5em, 10px);
 }
@@ -41,7 +42,6 @@ textarea {
     border: solid oklch(96% 0.2 110);
     border-radius: 10px;
     width: 100%;
-    height: clamp(min-content, auto, max-content); 
 }
 
 input:focus,
