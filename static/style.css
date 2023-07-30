@@ -29,7 +29,7 @@ footer {
 }
 
 form {
-    grid-template-rows: repeat(5, clamp(min-content, auto, max-content));
+    grid-template-rows: repeat(5, max-content);
     font-size: 1.1em;
     row-gap: max(0.5em, 10px);
 }
