@@ -20,6 +20,10 @@ span.websiteName {
     color: oklch(20% 0.1 263);
 }
 
+span.beta {
+    color: oklch(20% 0.04 110);
+}
+
 header,
 form,
 footer {
@@ -49,8 +53,6 @@ textarea:focus {
     outline-color: oklch(47% 0.2 263);
     background-color: oklch(96% 0.2 110);
 }
-
-
 
 textarea {
     resize: vertical;
