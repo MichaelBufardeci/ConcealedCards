@@ -3,7 +3,14 @@
     src: url('ConcertOne-Regular.ttf');
     font-weight: 400;
     font-style: regular;
-  }
+}
+
+@font-face {
+    font-family: 'Cotham';
+    src: url('CothamSans.otf');
+    font-weight: 400;
+    font-style: regular;
+}
 
 body {
     color: oklch(10% 0 0);
@@ -21,7 +28,11 @@ span.websiteName {
 }
 
 span.beta {
-    color: oklch(20% 0.04 110);
+    font-family: "Concert One";
+}
+
+header {
+    font-family: "Cotham";
 }
 
 header,
