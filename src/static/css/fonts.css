@@ -1,13 +1,13 @@
 @font-face {
     font-family: 'Concert One';
-    src: url('ConcertOne-Regular.ttf');
+    src: url("/static/fonts/ConcertOne-Regular.ttf");
     font-weight: 400;
     font-style: regular;
 }
 
 @font-face {
     font-family: 'Bagnard Sans';
-    src: url('BagnardSans.otf');
+    src: url("/static/fonts/BagnardSans.otf");
     font-weight: 400;
     font-style: regular;
 }

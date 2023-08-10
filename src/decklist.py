@@ -2,7 +2,7 @@ import re
 import logging
 from cardInfo import cardInfo
 from io import BytesIO
-from os import path
+from pathlib import Path
 from pypdf import PdfWriter, PdfReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -49,11 +49,11 @@ def writeCard(cardInfo):
 
 def createDecklist(name = None, id = None, birthday = None, decklist = None):
     global _canvas, _pokemonY, _trainerY, _energyY
-    filePath = path.realpath(path.dirname(__file__))
+    rootPath = Path(__file__).parents[1].resolve()
     #get API key
-    apiPath = path.join(filePath, "APIkey.txt")
+    apiPath = Path.joinpath(rootPath, "res", "APIkey.txt")
     try:
-        with open(path.join(filePath, "APIkey.txt")) as reader:
+        with open(apiPath) as reader:
             apiKey = reader.read().strip()
             #connect to API
             RestClient.configure(apiKey)
@@ -122,7 +122,7 @@ def createDecklist(name = None, id = None, birthday = None, decklist = None):
     # create a new PDF with Reportlab
     new_pdf = PdfReader(packet)
     # read existing PDF
-    existing_pdf = PdfReader(open(path.join(filePath, "blank.pdf"), "rb"))
+    existing_pdf = PdfReader(open(Path.joinpath(rootPath, "res", "blank.pdf"), "rb"))
     output = PdfWriter()
     # add the "watermark" (which is the new pdf) on the existing page
     page = existing_pdf.pages[0]
