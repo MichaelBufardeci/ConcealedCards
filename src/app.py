@@ -3,7 +3,7 @@ from io import BytesIO
 from flask import Flask, render_template, request, send_file, send_from_directory
 from decklist import createDecklist
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
 @app.route('/favicon.ico')
 def favicon():
