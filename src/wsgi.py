@@ -1,6 +1,6 @@
 from pathlib import Path
 from io import BytesIO
-from flask import Flask, render_template, request, send_file, url_for
+from flask import Flask, render_template, request, send_file
 from decklist import createDecklist
 
 app = Flask(__name__)
