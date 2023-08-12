@@ -49,11 +49,9 @@ def writeCard(cardInfo):
 
 def createDecklist(name = None, id = None, birthday = None, decklist = None):
     global _canvas, _pokemonY, _trainerY, _energyY
-    rootPath = Path(__file__).parents[1].resolve()
     #get API key
-    apiPath = Path.joinpath(rootPath, "res", "APIkey.txt")
     try:
-        with open(apiPath) as reader:
+        with open(Path(__file__).parents[1].resolve() / "res" / "APIkey.txt") as reader:
             apiKey = reader.read().strip()
             #connect to API
             RestClient.configure(apiKey)
@@ -122,13 +120,14 @@ def createDecklist(name = None, id = None, birthday = None, decklist = None):
     # create a new PDF with Reportlab
     new_pdf = PdfReader(packet)
     # read existing PDF
-    existing_pdf = PdfReader(open(Path.joinpath(rootPath, "res", "blank.pdf"), "rb"))
-    output = PdfWriter()
-    # add the "watermark" (which is the new pdf) on the existing page
-    page = existing_pdf.pages[0]
-    page.merge_page(new_pdf.pages[0])
-    output.add_page(page)
-    # finally, write "output" to a temp file
-    with BytesIO() as decklistFile:
-        output.write(decklistFile)
-        return decklistFile.getvalue()
+    with open(Path(__file__).parents[1].resolve() / "res" / "blank.pdf", "rb") as blankPdf:
+        existing_pdf = PdfReader(blankPdf)
+        output = PdfWriter()
+        # add the "watermark" (which is the new pdf) on the existing page
+        page = existing_pdf.pages[0]
+        page.merge_page(new_pdf.pages[0])
+        output.add_page(page)
+        # finally, write "output" to a temp file
+        with BytesIO() as decklistFile:
+            output.write(decklistFile)
+            return decklistFile.getvalue()

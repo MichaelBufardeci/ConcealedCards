@@ -58,8 +58,7 @@ class cardInfo:
         return self.getName() < other.getName()
 
     def dbLookup(self):
-        rootPath = Path(__file__).parents[1].resolve()
-        conn = sqlite3.connect(Path.joinPath(rootPath, "src", "cards.db"))
+        conn = sqlite3.connect(Path(__file__).parent.resolve() / "src" / "cards.db")
         cursor = conn.cursor()
         query = "SELECT regMark, type, isStandardLegal, isExpandedLegal FROM cards WHERE "
         queryData = []
