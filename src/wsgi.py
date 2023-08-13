@@ -19,3 +19,6 @@ def generate_decklist():
     decklistData = createDecklist(request.form['playerName'], request.form['playerId'], request.form['playerBirthday'], request.form['decklist'])
     decklistFile = BytesIO(decklistData) 
     return send_file(decklistFile, mimetype='application/pdf', download_name='Deck Registration Sheet.pdf')
+
+if __name__ == "__main__":
+    app.run(debug=True)
