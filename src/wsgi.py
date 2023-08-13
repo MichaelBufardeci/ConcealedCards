@@ -12,7 +12,12 @@ def favicon():
 
 @app.route('/')
 def render_site():
-    return render_template('site.html')
+    title = "Concealed Cards"
+    if app.debug:
+        title += " β"
+    description = "Concealed Cards fills out Pok&#233;mon TCG deck registrion sheets so you don't have to."
+    faviconAlt = "A simplified graphic of a water energy in front of two face-down cards."
+    return render_template('site.html', title=title, description=description, faviconAlt=faviconAlt)
 
 @app.route('/generate_decklist', methods=['POST'])
 def generate_decklist():
