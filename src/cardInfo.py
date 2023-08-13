@@ -94,7 +94,7 @@ class cardInfo:
         if self.name:
             search += f'!name:"{self.name}"'
         if self.set:
-            setIDs = {"PR-SV": "svp", "SVI": "sv1", "PAL": "sv2"}
+            setIDs = {"PR-SV":"svp", "SVI":"sv1", "PAL":"sv2", "OBF":"sv3"}
             if self.set in setIDs:
                 search += f' set.id:"{setIDs[self.set]}"'
             else:
