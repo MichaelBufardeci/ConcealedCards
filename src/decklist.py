@@ -1,88 +1,78 @@
+"""Module that writes pokemon decklists to deck registration sheet"""
+
 import re
 import logging
-from cardInfo import cardInfo
 from io import BytesIO
 from pathlib import Path
 from pypdf import PdfWriter, PdfReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from pokemontcgsdk import RestClient
+from card_info import CardInfo
 
-_canvas = None
-_pokemonY = None
-_trainerY = None
-_energyY = None
+def write_player_info(my_canvas, player_name=None, player_id=None, birthday=None):
+    """writes player name, ID, birthday, and age division to deck registration sheet"""
 
+    # write player info to canvas
+    info_y = 676
+    if player_name:
+        my_canvas.drawString(120, info_y, player_name)
+    if player_id:
+        my_canvas.drawString(284, info_y, player_id)
+    if birthday:
+        # the birthday needs to be split up
+        birthday = re.split(r"\W", birthday)
+        birthday = list(filter(None, birthday))
+        my_canvas.drawString(471, info_y, birthday[1].lstrip('0').rjust(2))
+        my_canvas.drawString(495, info_y, birthday[2].lstrip('0').rjust(2))
+        my_canvas.drawString(519, info_y, birthday[0])
+        # we still need to check the division box
+        division_x = 366.5
+        if int(birthday[2]) >= 2011:
+            my_canvas.drawString(division_x, 644, '✓')
+        elif int(birthday[2]) <= 2006:
+            my_canvas.drawString(division_x, 620, '✓')
+        else:
+            my_canvas.drawString(division_x, 632, '✓')
+    return my_canvas
 
-def writeCard(cardInfo):
-    global _canvas, _pokemonY, _trainerY, _energyY
-    #jump to line
-    type = cardInfo.getType()
-    match type:
+def write_card(my_canvas, card_info, y_values):
+    """writes a pokemon card to the deck registration pdf"""
+
+    # jump to line
+    supertype = card_info.get_supertype()
+    match supertype:
         case "Pokémon":
-            y = _pokemonY
+            y = y_values["pokemon_y"]
         case "Trainer":
-            y = _trainerY
+            y = y_values["trainer_y"]
         case "Energy":
-            y = _energyY
+            y = y_values["energy_y"]
         case _:
             return False
-    #always write quantity and name
-    _canvas.drawString(275, y, str(cardInfo.getQuantity()).rjust(2))
-    _canvas.drawString(299, y, cardInfo.getName())
-    #update y for type and write extra info if pokemon
-    lineHeight = 11.5
-    match type:
+    # always write quantity and name
+    my_canvas.drawString(275, y, str(card_info.quantity).rjust(2))
+    my_canvas.drawString(299, y, card_info.get_name())
+    # update y for type and write extra info if pokemon
+    line_height = 11.5
+    match supertype:
         case "Pokémon":
-            _canvas.drawString(449, y, cardInfo.getSet())
-            if len(cardInfo.getCollNo()) > 3:
-                _canvas.setFontSize(6)
-            _canvas.drawString(479, y, cardInfo.getCollNo().rjust(7))
-            _canvas.setFontSize(9)
-            _canvas.drawString(520, y, cardInfo.getRegMark().rjust(2))
-            _pokemonY -= lineHeight
+            my_canvas.drawString(449, y, card_info.get_set_code())
+            if len(card_info.get_collector_number()) > 3:
+                my_canvas.setFontSize(6)
+            my_canvas.drawString(479, y, card_info.get_collector_number().rjust(7))
+            my_canvas.setFontSize(9)
+            my_canvas.drawString(520, y, card_info.get_regulation_mark().rjust(2))
+            y_values["pokemon_y"] -= line_height
         case "Trainer":
-            _trainerY -= lineHeight
+            y_values["trainer_y"] -= line_height
         case "Energy":
-            _energyY -= lineHeight
-    return True
+            y_values["energy_y"] -= line_height
+    return my_canvas, y_values
 
-def createDecklist(name = None, id = None, birthday = None, decklist = None):
-    global _canvas, _pokemonY, _trainerY, _energyY
-    #get API key
-    try:
-        with open(Path(__file__).parents[1].resolve() / "res" / "APIkey.txt") as reader:
-            apiKey = reader.read().strip()
-            #connect to API
-            RestClient.configure(apiKey)
-    except:
-        logging.warning("API key not found")
-    #create canvas for decklist
-    packet = BytesIO()
-    _canvas = canvas.Canvas(packet, pagesize=letter)
-    _canvas.setFont("Helvetica", 9)
-    #write player info to canvas
-    infoY = 676
-    if name:
-        _canvas.drawString(120, infoY, name)
-    if id:
-        _canvas.drawString(284, infoY, id)
-    if birthday:
-        #the birthday needs to be split up
-        birthday = re.split("\W", birthday)
-        birthday = list(filter(None, birthday))
-        _canvas.drawString(471, infoY, birthday[1].lstrip('0').rjust(2))
-        _canvas.drawString(495, infoY, birthday[2].lstrip('0').rjust(2))
-        _canvas.drawString(519, infoY, birthday[0])
-        #we still need to check the division box
-        divisionX = 366.5
-        if int(birthday[2]) >= 2011:
-            _canvas.drawString(divisionX, 644, '✓')
-        elif int(birthday[2]) <= 2006:
-            _canvas.drawString(divisionX, 620, '✓')
-        else:
-            _canvas.drawString(divisionX, 632, '✓')
-    #write decklist to canvas
+def write_decklist(my_canvas, decklist=None):
+    """writes pokemon cards to deck registration sheet"""
+
     deck = []
     decklist = decklist.splitlines()
     for line in decklist:
@@ -90,44 +80,66 @@ def createDecklist(name = None, id = None, birthday = None, decklist = None):
         if line and line[0].isdigit():
             line = line.removesuffix(" PH")
             line = line.split(' ')
-            card = cardInfo(quantity = line[0], name = ' '.join(line[1:-2]), set = line[-2], collNo = line[-1])
+            card = CardInfo(quantity=line[0], name=' '.join(
+                line[1:-2]), set_code=line[-2], collector_number=line[-1])
             if card in deck:
                 deck[deck.index(card)].quantity += card.quantity
             else:
                 deck.append(card)
     deck.sort()
-    _canvas.setFontSize(9)
-    #we need to reset these y values for a reason I do not fully understand
-    _pokemonY = 565.5
-    _trainerY = 411.5
-    _energyY = 165.5
-    standardLegal = True
-    expandedLegal = True
+    my_canvas.setFontSize(9)
+    y_values = {"pokemon_y": 565.5, "trainer_y": 411.5, "energy_y": 165.5}
+    standard_legal = True
+    expanded_legal = True
+    deck_quantity = 0
     for card in deck:
-        writeCard(card)
-        if standardLegal and not card.getStandardLegality():
-            standardLegal = False
-        if expandedLegal and not card.getExpandedLegality():
-            expandedLegal = False
-    formatY = 691
-    if standardLegal:
-        _canvas.drawString(175, formatY, '✓')
-    elif expandedLegal:
-        _canvas.drawString(219, formatY, '✓')
-    _canvas.save()
-    #move to the beginning of the StringIO buffer
+        my_canvas, y_values = write_card(my_canvas, card, y_values)
+        deck_quantity += card.quantity
+        if standard_legal and not card.get_standard_legality():
+            standard_legal = False
+        if expanded_legal and not card.get_expanded_legality():
+            expanded_legal = False
+    if deck_quantity == 60:
+        format_y = 691
+        if standard_legal:
+            my_canvas.drawString(175, format_y, '✓')
+        elif expanded_legal:
+            my_canvas.drawString(219, format_y, '✓')
+    return my_canvas
+
+def create_decklist(player_name=None, player_id=None, birthday=None, decklist=None):
+    """fills out a pokemon deck registration sheet pdf"""
+
+    # get API key
+    try:
+        api_key_path = Path(__file__).parents[1].resolve() / "res" / "APIkey.txt"
+        with open(api_key_path, encoding="utf-8") as reader:
+            api_key = reader.read().strip()
+            # connect to API
+            RestClient.configure(api_key)
+    except OSError:
+        logging.warning("API key not found")
+    # create canvas for decklist
+    packet = BytesIO()
+    my_canvas = canvas.Canvas(packet, pagesize=letter)
+    my_canvas.setFont("Helvetica", 9)
+    # write canvas
+    my_canvas = write_player_info(my_canvas, player_name, player_id, birthday)
+    my_canvas = write_decklist(my_canvas, decklist)
+    my_canvas.save()
+    # move to the beginning of the StringIO buffer
     packet.seek(0)
     # create a new PDF with Reportlab
     new_pdf = PdfReader(packet)
     # read existing PDF
-    with open(Path(__file__).parents[1].resolve() / "res" / "blank.pdf", "rb") as blankPdf:
-        existing_pdf = PdfReader(blankPdf)
+    with open(Path(__file__).parents[1].resolve() / "res" / "blank.pdf", "rb") as blank_pdf:
+        existing_pdf = PdfReader(blank_pdf)
         output = PdfWriter()
         # add the "watermark" (which is the new pdf) on the existing page
         page = existing_pdf.pages[0]
         page.merge_page(new_pdf.pages[0])
         output.add_page(page)
         # finally, write "output" to a temp file
-        with BytesIO() as decklistFile:
-            output.write(decklistFile)
-            return decklistFile.getvalue()
+        with BytesIO() as decklist_file:
+            output.write(decklist_file)
+            return decklist_file.getvalue()
