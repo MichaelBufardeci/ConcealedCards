@@ -57,77 +57,57 @@ class cardInfo:
     def __lt__(self, other):
         return self.getName() < other.getName()
 
-    def dbLookup(self):
+    def dbUpdate(self, results):
+        self.regMark = results[0][0]
+        self.type = results[0][1]
+        self.isStandardLegal = results[0][2]
+        self.isExpandedLegal = results[0][3]
+
+    def dbQuery(self, query, queryData):
         conn = sqlite3.connect(Path(__file__).parent.resolve() / "cards.db")
         cursor = conn.cursor()
-        query = "SELECT regMark, type, isStandardLegal, isExpandedLegal FROM cards WHERE "
-        queryData = []
-        if self.name:
-            query += "name=?"
-            queryData.append(self.name)
-        if self.set and self.collNo:
-            if query.endswith("?"):
-                query += " AND "
-            query += "setCode=? AND collNo=?"
-            queryData.append(self.set)
-            queryData.append(self.collNo)
-        if queryData:
-            results = cursor.execute(query, tuple(queryData)).fetchall()
-            if len(results) == 1:
-                self.regMark = results[0][0]
-                self.type = results[0][1]
-                self.isStandardLegal = results[0][2]
-                self.isExpandedLegal = results[0][3]
-                conn.close()
+        results =  cursor.execute(query, tuple(queryData)).fetchall()
+        conn.close()
+        if len(results) == 1:
+            self.dbUpdate(results=results)
+            return True
+        elif len(results) > 1:
+            type = results[0][1]
+            if type in ["Trainer", "Energy"]:
+                self.dbUpdate(results=results)
                 return True
+        return False
+    
+    def dbLookup(self):
+        queryRoot = "SELECT regMark, type, isStandardLegal, isExpandedLegal FROM cards WHERE "
+        if self.name and self.set and self.collNo:
+            query = queryRoot + "name=? AND setCode=? AND collNo=?"
+            queryData = [self.name, self.set, self.collNo]
+            if self.dbQuery(query=query, queryData=queryData):
+                return True
+        if self.set and self.collNo:
+            query = queryRoot + "setCode=? AND collNo=?"
+            queryData = [self.set, self.collNo]
+            if self.dbQuery(query=query, queryData=queryData):
+                return True
+        if self.name:
+            query = queryRoot + "name=?"
+            queryData = [self.name]
+            if self.dbQuery(query=query, queryData=queryData):
+                return True
+        #if we still haven't foind it locally, try the API
         apiSuccess = self.apiLookup()
+        #if it was found by the API, save it locally
         if apiSuccess:
+            conn = sqlite3.connect(Path(__file__).parent.resolve() / "cards.db")
+            cursor = conn.cursor()
             query = "INSERT INTO cards (name, setCode, collNo, regMark, type, isStandardLegal, isExpandedLegal) VALUES (?, ?, ?, ?, ?, ?, ?)"
             cursor.execute(query, (self.name, self.set, self.collNo, self.regMark, self.type, self.isStandardLegal, self.isExpandedLegal))
             conn.commit()
-        conn.close()
+            conn.close()
         return apiSuccess
 
-    def apiLookup(self):
-        #construct search query
-        search = ''
-        if self.name:
-            search += f'!name:"{self.name}"'
-        if self.set:
-            setIDs = {"PR-SV":"svp", "SVI":"sv1", "PAL":"sv2", "OBF":"sv3"}
-            if self.set in setIDs:
-                search += f' set.id:"{setIDs[self.set]}"'
-            else:
-                search += f' set.ptcgoCode:"{self.set}"'
-        if self.collNo:
-            search += f' number:*{self.collNo.lstrip("0")}'
-        search = search.strip()
-        #query the database
-        cards = Card.where(q=search, orderBy='-set.releaseDate')
-        #see if we have one result
-        all3 = False
-        nameCheck = False
-        while len(cards) != 1:
-            if len(cards) > 1:
-                logging.warning(f"{search} returned multiple cards, using first result")
-                break
-            else:
-                logging.info(f"no cards returned by {search}")
-                if self.name and self.set and self.collNo and not all3:
-                    all3 = True
-                    #try again with just set and collector number
-                    search = search[search.find("set."):]
-                elif self.name and (self.set or self.collNo) and not nameCheck:
-                    nameCheck = True
-                    search = f'!name:"{self.name}"'
-                else:
-                    logging.error(f"Could not find! {search}")
-                    return False
-            cards = Card.where(q=search, orderBy="-set.releaseDate")
-        card = cards[0]
-        if nameCheck and card.supertype == "Pokémon":
-            logging.warning(f"{search} returned a pokemon")
-        #populate blank variables with query result
+    def apiUpdate(self, card):
         if not self.name:
             self.name = card.name
         if not self.set:
@@ -145,7 +125,45 @@ class cardInfo:
             self.isStandardLegal = card.legalities.standard == "Legal"
         if not self.isExpandedLegal:
             self.isExpandedLegal = card.legalities.expanded == "Legal"
-        return True
+
+    def apiQuery(self, search):
+        cards = Card.where(q=search, orderBy='-set.releaseDate')
+        if len(cards) == 1:
+            self.apiUpdate(cards[0])
+            return True
+        elif len(cards) > 1:
+            card = cards[0]
+            if card.supertype in ["Trainer", "Energy"]:
+                self.apiUpdate(card)
+                return True
+        return False
+
+    def apiLookup(self):
+        #clean the data
+        setIDs = {"PR-SV":"svp", "SVI":"sv1", "PAL":"sv2", "OBF":"sv3"}
+        if self.set:
+            set = self.set
+            if set in setIDs:
+                set = setIDs[set]
+                setSearch = 'set.id'
+            else:
+                setSearch = 'set.ptcgoCode'
+        if self.collNo:
+            number = self.collNo.lstrip("0")
+        #start querying API
+        if self.name and set and number:
+            search = f'!name:"{self.name}" {setSearch}:"{set}" number:*{number}'
+            if self.apiQuery(search=search):
+                return True
+        if set and number:
+            search = f'{setSearch}:"{set}" number:*{number}'
+            if self.apiQuery(search=search):
+                return True
+        if self.name:
+            search = f'!name:"{self.name}"'
+            if self.apiQuery(search=search):
+                return True
+        return False
 
     def getName(self):
         if not self.name:
