@@ -16,11 +16,11 @@ span.websiteName {
 }
 
 span.beta {
-    font-family: "Concert One";
+    font-family: "Concert One", serif;
 }
 
 header {
-    font-family: "Bagnard Sans", "COncert One";
+    font-family: "Bagnard Sans", sans-serif;
 }
 
 header,
