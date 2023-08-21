@@ -49,7 +49,8 @@ def write_card(my_canvas, card_info, y_values):
         case "Energy":
             y = y_values["energy_y"]
         case _:
-            return False
+            logging.error("supertype is '%s'", supertype)
+            return my_canvas, y_values
     # always write quantity and name
     my_canvas.drawString(275, y, str(card_info.quantity).rjust(2))
     my_canvas.drawString(299, y, card_info.get_name())
@@ -80,8 +81,11 @@ def write_decklist(my_canvas, decklist=None):
         if line and line[0].isdigit():
             line = line.removesuffix(" PH")
             line = line.split(' ')
-            card = CardInfo(quantity=line[0], name=' '.join(
-                line[1:-2]), set_code=line[-2], collector_number=line[-1])
+            if line[-1][-1].isdigit():
+                card = CardInfo(quantity=line[0], name=' '.join(line[1:-2]), set_code=line[-2],
+                                collector_number=line[-1])
+            else:
+                card = CardInfo(quantity=line[0], name=' '.join(line[1:-1]), set_code=line[-1])
             if card in deck:
                 deck[deck.index(card)].quantity += card.quantity
             else:
