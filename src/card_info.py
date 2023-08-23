@@ -1,7 +1,7 @@
 """Module containing pokemon card class"""
 import re
 import sqlite3
-from functools import total_ordering
+from functools import cached_property, total_ordering
 from pathlib import Path
 from pokemontcgsdk import Card
 
@@ -61,19 +61,19 @@ class CardInfo:
             self.set_code = "PR"
 
     def __eq__(self, other):
-        if self.get_supertype() == other.get_supertype():
-            if self.get_supertype() == "Trainer" or self.get_supertype() == "Energy":
-                if self.get_name() == other.get_name():
+        if self.get_supertype == other.get_supertype:
+            if self.get_supertype == "Trainer" or self.get_supertype == "Energy":
+                if self.get_name == other.get_name:
                     return True
             else:
-                if self.get_name() == other.get_name() and \
-                   self.get_set_code() == other.get_set_code() and \
-                   self.get_collector_number() == other.get_collector_number():
+                if self.get_name == other.get_name and \
+                   self.get_set_code == other.get_set_code and \
+                   self.get_collector_number == other.get_collector_number:
                     return True
         return False
 
     def __lt__(self, other):
-        return self.get_name() < other.get_name()
+        return self.get_name < other.get_name
 
     def update_from_database(self, result):
         """Updates this object with information from local card database"""
@@ -216,42 +216,49 @@ class CardInfo:
                 return True
         return False
 
+    @cached_property
     def get_name(self):
         """gets this card's name"""
         if not self.name:
             self.lookup_from_database()
         return self.name
 
+    @cached_property
     def get_set_code(self):
         """gets this card's set code"""
         if not self.set_code:
             self.lookup_from_database()
         return self.set_code
 
+    @cached_property
     def get_collector_number(self):
         """gets this card's collector number"""
         if not self.collector_number:
             self.lookup_from_database()
         return self.collector_number
 
+    @cached_property
     def get_supertype(self):
         """gets this card's supertype"""
         if not self.supertype:
             self.lookup_from_database()
         return self.supertype
 
+    @cached_property
     def get_regulation_mark(self):
         """gets this card's regulation mark"""
         if not self.regulation_mark:
             self.lookup_from_database()
         return self.regulation_mark
 
+    @cached_property
     def get_standard_legality(self):
         """gets this card's standard legality"""
         if not self.legality["standard"]:
             self.lookup_from_database()
         return self.legality["standard"]
 
+    @cached_property
     def get_expanded_legality(self):
         """gets this card's expanded legality"""
         if not self.legality["expanded"]:

@@ -40,7 +40,7 @@ def write_card(my_canvas, card_info, y_values):
     """writes a pokemon card to the deck registration pdf"""
 
     # jump to line
-    supertype = card_info.get_supertype()
+    supertype = card_info.get_supertype
     match supertype:
         case "Pokémon":
             y = y_values["pokemon_y"]
@@ -49,21 +49,22 @@ def write_card(my_canvas, card_info, y_values):
         case "Energy":
             y = y_values["energy_y"]
         case _:
-            logging.error("supertype is '%s'", supertype)
+            logging.error("%s %s %s supertype is '%s'", card_info.get_name, card_info.get_set_code,
+                          card_info.get_collector_number, supertype)
             return my_canvas, y_values
     # always write quantity and name
     my_canvas.drawString(275, y, str(card_info.quantity).rjust(2))
-    my_canvas.drawString(299, y, card_info.get_name())
+    my_canvas.drawString(299, y, card_info.get_name)
     # update y for type and write extra info if pokemon
     line_height = 11.5
     match supertype:
         case "Pokémon":
-            my_canvas.drawString(449, y, card_info.get_set_code())
-            if len(card_info.get_collector_number()) > 3:
+            my_canvas.drawString(449, y, card_info.get_set_code)
+            if len(card_info.get_collector_number) > 3:
                 my_canvas.setFontSize(6)
-            my_canvas.drawString(479, y, card_info.get_collector_number().rjust(7))
+            my_canvas.drawString(479, y, card_info.get_collector_number.rjust(7))
             my_canvas.setFontSize(9)
-            my_canvas.drawString(520, y, card_info.get_regulation_mark().rjust(2))
+            my_canvas.drawString(520, y, card_info.get_regulation_mark.rjust(2))
             y_values["pokemon_y"] -= line_height
         case "Trainer":
             y_values["trainer_y"] -= line_height
@@ -99,9 +100,9 @@ def write_decklist(my_canvas, decklist=None):
     for card in deck:
         my_canvas, y_values = write_card(my_canvas, card, y_values)
         deck_quantity += card.quantity
-        if standard_legal and not card.get_standard_legality():
+        if standard_legal and not card.get_standard_legality:
             standard_legal = False
-        if expanded_legal and not card.get_expanded_legality():
+        if expanded_legal and not card.get_expanded_legality:
             expanded_legal = False
     if deck_quantity == 60:
         format_y = 691
