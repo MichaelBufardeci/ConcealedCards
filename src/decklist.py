@@ -14,26 +14,26 @@ def write_player_info(my_canvas, player_name=None, player_id=None, birthday=None
     """writes player name, ID, birthday, and age division to deck registration sheet"""
 
     # write player info to canvas
-    info_y = 676
+    info_y = 722
     if player_name:
-        my_canvas.drawString(120, info_y, player_name)
+        my_canvas.drawString(100, info_y, player_name)
     if player_id:
-        my_canvas.drawString(284, info_y, player_id)
+        my_canvas.drawString(287, info_y, player_id)
     if birthday:
         # the birthday needs to be split up
         birthday = re.split(r"\W", birthday)
         birthday = list(filter(None, birthday))
-        my_canvas.drawString(471, info_y, birthday[1].lstrip('0').rjust(2))
-        my_canvas.drawString(495, info_y, birthday[2].lstrip('0').rjust(2))
-        my_canvas.drawString(519, info_y, birthday[0])
+        my_canvas.drawString(505, info_y, birthday[1].lstrip('0').rjust(2))
+        my_canvas.drawString(532, info_y, birthday[2].lstrip('0').rjust(2))
+        my_canvas.drawString(559, info_y, birthday[0])
         # we still need to check the division box
-        division_x = 366.5
-        if int(birthday[2]) >= 2011:
-            my_canvas.drawString(division_x, 644, '✓')
-        elif int(birthday[2]) <= 2006:
-            my_canvas.drawString(division_x, 620, '✓')
+        division_x = 385
+        if int(birthday[0]) >= 2011:
+            my_canvas.drawString(division_x, 685, '✓')
+        elif int(birthday[0]) <= 2006:
+            my_canvas.drawString(division_x, 659, '✓')
         else:
-            my_canvas.drawString(division_x, 632, '✓')
+            my_canvas.drawString(division_x, 672, '✓')
     return my_canvas
 
 def write_card(my_canvas, card_info, y_values):
@@ -53,18 +53,18 @@ def write_card(my_canvas, card_info, y_values):
                           card_info.get_collector_number, supertype)
             return my_canvas, y_values
     # always write quantity and name
-    my_canvas.drawString(275, y, str(card_info.quantity).rjust(2))
-    my_canvas.drawString(299, y, card_info.get_name)
+    my_canvas.drawString(280, y, str(card_info.quantity).rjust(2))
+    my_canvas.drawString(305, y, card_info.get_name)
     # update y for type and write extra info if pokemon
-    line_height = 11.5
+    line_height = 13.1
     match supertype:
         case "Pokémon":
-            my_canvas.drawString(449, y, card_info.get_set_code)
+            my_canvas.drawString(482, y, card_info.get_set_code)
             if len(card_info.get_collector_number) > 3:
                 my_canvas.setFontSize(6)
-            my_canvas.drawString(479, y, card_info.get_collector_number.rjust(7))
+            my_canvas.drawString(510, y, card_info.get_collector_number.rjust(7))
             my_canvas.setFontSize(9)
-            my_canvas.drawString(520, y, card_info.get_regulation_mark.rjust(2))
+            my_canvas.drawString(560, y, card_info.get_regulation_mark.rjust(2))
             y_values["pokemon_y"] -= line_height
         case "Trainer":
             y_values["trainer_y"] -= line_height
@@ -93,7 +93,7 @@ def write_decklist(my_canvas, decklist=None):
                 deck.append(card)
     deck.sort()
     my_canvas.setFontSize(9)
-    y_values = {"pokemon_y": 565.5, "trainer_y": 411.5, "energy_y": 165.5}
+    y_values = {"pokemon_y": 596, "trainer_y": 420, "energy_y": 137.5}
     standard_legal = True
     expanded_legal = True
     deck_quantity = 0
@@ -105,11 +105,11 @@ def write_decklist(my_canvas, decklist=None):
         if expanded_legal and not card.get_expanded_legality:
             expanded_legal = False
     if deck_quantity == 60:
-        format_y = 691
+        format_y = 740
         if standard_legal:
-            my_canvas.drawString(175, format_y, '✓')
+            my_canvas.drawString(165, format_y, '✓')
         elif expanded_legal:
-            my_canvas.drawString(219, format_y, '✓')
+            my_canvas.drawString(205, format_y, '✓')
     return my_canvas
 
 def create_decklist(player_name=None, player_id=None, birthday=None, decklist=None):
