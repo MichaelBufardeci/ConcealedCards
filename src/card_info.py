@@ -28,6 +28,16 @@ class CardInfo:
             self.name = str(name).strip()
         if set_code:
             self.set_code = str(set_code).strip().upper()
+            official_set_codes = ["BLW", "EPO", "NVI", "NXD", "DEX", "DRX", "BCR", "PLS", "PLF",
+                                  "PLB", "LTR", "DRV", "TK", "KSS", "XY", "FLF", "FFI", "PHF",
+                                  "PRC", "ROS", "AOR", "BKT", "BKP", "FCO", "STS", "EVO", "DCR",
+                                  "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
+                                  "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH",
+                                  "RCL", "DAA", "VIV", "BST", "CRE", "EVS", "FST", "BRS", "ASR",
+                                  "LOR", "SIT", "CPA", "SHF", "CEL", "PGO", "CRZ", "SVI", "PAL",
+                                  "OBF", "PR", "SVP", "MCD"]
+            if self.set_code not in official_set_codes:
+                logging.warning("%s is not an official set code", self.set_code)
         if collector_number:
             self.collector_number = str(collector_number).strip().upper()
         if regulation_mark:
