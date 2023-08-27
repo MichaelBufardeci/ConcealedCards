@@ -25,17 +25,17 @@ class CardInfo:
     ):
         # set variables
         if name:
-            self.name = str(name).strip()
+            self.name = str(name).strip().removeprefix("Basic ")
         if set_code:
             self.set_code = str(set_code).strip().upper()
-            official_set_codes = ["BLW", "EPO", "NVI", "NXD", "DEX", "DRX", "BCR", "PLS", "PLF",
-                                  "PLB", "LTR", "DRV", "TK", "KSS", "XY", "FLF", "FFI", "PHF",
-                                  "PRC", "ROS", "AOR", "BKT", "BKP", "FCO", "STS", "EVO", "DCR",
-                                  "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
-                                  "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH",
-                                  "RCL", "DAA", "VIV", "BST", "CRE", "EVS", "FST", "BRS", "ASR",
-                                  "LOR", "SIT", "CPA", "SHF", "CEL", "PGO", "CRZ", "SVI", "PAL",
-                                  "OBF", "PR", "SVP", "MCD"]
+            official_set_codes = [
+                "BLW", "EPO", "NVI", "NXD", "DEX", "DRX", "BCR", "PLS", "PLF", "PLB", "LTR", "DRV",
+                "TK", "KSS", "XY", "FLF", "FFI", "PHF", "PRC", "ROS", "AOR", "BKT", "BKP", "FCO",
+                "STS", "EVO", "DCR", "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
+                "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH", "RCL", "DAA", "VIV",
+                "BST", "CRE", "EVS", "FST", "BRS", "ASR", "LOR", "SIT", "CPA", "SHF", "CEL", "PGO",
+                "CRZ", "SVI", "PAL", "OBF", "PR", "SVP", "MCD"
+            ]
             if self.set_code not in official_set_codes:
                 logging.warning("%s is not an official set code", self.set_code)
         if collector_number:
@@ -46,9 +46,15 @@ class CardInfo:
             self.supertype = str(supertype).strip()
         if quantity:
             self.quantity = int(quantity)
+        #special formatting for basic energies
+        basic_energies = [
+            "Grass Energy", "Fire Energy", "Water Energy", "Lightning Energy", "Psychic Energy",
+            "Fighting Energy", "Darkness Energy", "Metal Energy", "Fairy Energy"
+        ]
+        if self.name in basic_energies:
+            self.set_code = "ENERGY"
         # ptcgl formats basic energy cards weird, we need to correct that
         if self.set_code == "ENERGY":
-            self.name = self.name.removeprefix("Basic ")
             energy_symbols = {
                 'G': "Grass", 'R': "Fire", 'W': "Water", 'L': "Lightning", 'P': "Psychic",
                 'F': "Fighting", 'D': "Darkness", 'M': "Metal", 'Y': "Fairy"
@@ -58,13 +64,6 @@ class CardInfo:
                                    f"{energy_name}", self.name)
             if not self.name.endswith(" Energy"):
                 self.name += " Energy"
-        # special treatment for basic energies
-        basic_energies = [
-            "Grass Energy", "Fire Energy", "Water Energy", "Lightning Energy", "Psychic Energy",
-            "Fighting Energy", "Darkness Energy", "Metal Energy", "Fairy Energy"
-        ]
-        if self.name in basic_energies:
-            self.set_code = "ENERGY"
         # limitless formats promos weird, we need to correct that
         if self.set_code.startswith("PR-"):
             self.collector_number = ''.join(
