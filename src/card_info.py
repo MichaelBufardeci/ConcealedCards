@@ -1,4 +1,5 @@
 """Module containing pokemon card class"""
+import logging
 import re
 import sqlite3
 from functools import cached_property, total_ordering
@@ -178,6 +179,7 @@ class CardInfo:
             if card.supertype in ["Trainer", "Energy"]:
                 self.update_from_api(card)
                 return True
+        logging.warning("%s results found for query '%s'", len(cards), search)
         return False
 
     def lookup_from_api(self):
@@ -195,11 +197,11 @@ class CardInfo:
             collector_number = collector_number.lstrip("0")
         # start querying API
         if self.name and set_code and collector_number:
-            search = f'!name:"{self.name}" {set_search}:"{set_code}" number:*{collector_number}'
+            search = f'!name:"{self.name}" {set_search}:"{set_code}" number:{collector_number}'
             if self.query_api(search):
                 return True
         if set_code and collector_number:
-            search = f'{set_search}:"{set_code}" number:*{collector_number}'
+            search = f'{set_search}:"{set_code}" number:{collector_number}'
             if self.query_api(search):
                 return True
         if self.name and set_code:
@@ -211,7 +213,7 @@ class CardInfo:
             if self.query_api(search):
                 return True
         if self.name and set_code:
-            search = f'!name:"{self.name} {set_code}"'
+            search = f'!name:"{self.name} {self.set_code}"'
             if self.query_api(search):
                 return True
         return False
