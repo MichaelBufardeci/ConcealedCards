@@ -1,13 +1,15 @@
 @font-face {
     font-family: 'Concert One';
-    src: url("/static/fonts/ConcertOne-Regular.ttf");
-    font-weight: 400;
-    font-style: regular;
+    src: url('/static/fonts/concertone-regular-webfont.woff2') format('woff2'),
+         url('/static/fonts/concertone-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
     font-family: 'Bagnard Sans';
-    src: url("/static/fonts/BagnardSans.otf");
-    font-weight: 400;
-    font-style: regular;
+    src: url('/static/fonts/bagnardsans-webfont.woff2') format('woff2'),
+         url('/static/fonts/bagnardsans-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
