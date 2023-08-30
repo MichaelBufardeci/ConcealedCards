@@ -12,8 +12,7 @@ app = Flask(__name__)
 def favicon():
     """reroutes the favicon to /favicon.ico"""
 
-    favicon_path = Path(__file__).parent.resolve() / \
-        'static' / 'favicons' / 'favicon.ico'
+    favicon_path = Path(__file__).parent.resolve() / 'static' / 'favicons' / 'favicon.ico'
     return send_file(favicon_path, mimetype='image/vnd.microsoft.icon')
 
 
@@ -24,7 +23,7 @@ def render_site():
     title = "Concealed Cards"
     if app.debug:
         title += " β"
-    description = "Concealed Cards fills out Pok&#233;mon TCG deck registrion sheets "\
+    description = "Concealed Cards fills out Pokémon TCG deck registrion sheets "\
                   "so you don't have to."
     favicon_alt = "A simplified graphic of a water energy in front of two face-down cards."
     return render_template(
