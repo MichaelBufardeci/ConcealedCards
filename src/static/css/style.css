@@ -1,14 +1,32 @@
 @import url(fonts.css);
 
 body {
+    font-family: "Concert One", serif;
+    margin: 0;
+    padding: 0;
     color: oklch(10% 0 0);
     background-color: oklch(98% 0 0);
-    font-family: "Concert One";
-    font-size: 1em;
 }
-
+  
 body::selection {
     background-color: oklch(47% 0.2 263);
+}
+   
+header,
+footer,
+form {
+    max-width: 1000px;
+    margin: 0 auto;
+    box-sizing: border-box; 
+}
+   
+header,
+footer {
+    padding: 0px 5px;
+}
+   
+header {
+    font-family: "Bagnard Sans", sans-serif;
 }
 
 span.websiteName {
@@ -19,43 +37,50 @@ span.beta {
     font-family: "Concert One", serif;
 }
 
-header {
-    font-family: "Bagnard Sans", sans-serif;
-}
-
-header,
-form,
-footer {
-    display: grid;
-    grid-template-columns: clamp(50vw, 800px, 90vw);
-    justify-content: center;
-}
-
 form {
+    padding: 5px 20px;
+}
+
+label,
+button {
+    display: block;
     font-size: 1.1em;
-    row-gap: max(0.5em, 10px);
-    grid-auto-rows: max(2em, auto);
+}
+  
+label {
+    margin-bottom: 5px;
 }
 
 input,
 textarea {
-    font: inherit;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
     color: oklch(0% 0 0);
     background-color: oklch(100% 0 0);
-    border: solid oklch(96% 0.2 110);
+    border: 2px solid oklch(96% 0.2 110);
     border-radius: 10px;
-    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
 }
-
+  
 input:focus,
 textarea:focus {
     outline-color: oklch(47% 0.2 263);
     background-color: oklch(96% 0.2 110);
 }
-
+  
 textarea {
     resize: vertical;
-    height: max(20em, 50vh);
+    height: 45vh;
+}
+
+button {
+    margin-top: 20px;
+}
+
+footer {
+    font-size: 0.85em;
 }
 
 a:link,
@@ -67,8 +92,4 @@ a:visited {
 a:focus,
 a:hover {
     text-decoration: underline;
-}
-
-footer {
-    font-size: 0.85em;
 }
