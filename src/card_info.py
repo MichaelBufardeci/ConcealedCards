@@ -194,7 +194,7 @@ class CardInfo:
     def lookup_from_api(self):
         """Creates and runs queries to get card information from remote API"""
         # clean the data
-        set_ids = {"PR-SV": "svp", "SVI": "sv1", "PAL": "sv2", "OBF": "sv3"}
+        set_ids = {"PR-SV": "svp", "SVI": "sv1", "PAL": "sv2", "OBF": "sv3", "MEW": "sv3pt5"}
         set_code = self.set_code
         if set_code in set_ids:
             set_code = set_ids[set_code]
