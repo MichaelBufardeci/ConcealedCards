@@ -13,13 +13,13 @@
         <meta property="og:image:type" content="image/svg+xml" />
         <meta property="og:image" content="{{ url_for('static', filename='favicons/icon-512.png') }}" />
         <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:alt" content="{{ faviconAlt }}." />
+        <meta property="og:image:alt" content="{{ favicon_alt }}." />
         <meta property="og:description" content="{{ description }}" />
         <meta property="twitter:card" content="summary" />
         <meta property="twitter:description" content="{{ description }}" />
         <meta property="twitter:title" content="{{ title }}" />
         <meta property="twitter:image" content="{{ url_for('static', filename='icon-512.png') }}" />
-        <meta property="twitter:image:alt" content="{{ faviconAlt }}" />
+        <meta property="twitter:image:alt" content="{{ favicon_alt }}" />
         <link rel="manifest" href="/manifest.webmanifest">
         <link rel="icon" href="{{ url_for('static', filename='favicons/favicon.ico') }}" sizes="32x32">
         <link rel="icon" href="{{ url_for('static', filename='favicons/icon.svg') }}" type="image/svg+xml">
@@ -35,23 +35,28 @@
             </h1>
         </header>
         <main>
-            <form action="{{ url_for('generate_decklist') }}" target="_blank" method="post" enctype=multipart/form-data>
+            <form action="{{ url_for('generate_decklist') }}" method="post" enctype=multipart/form-data>
                 <label>
                     Player Name:
-                    <input type="text" name="playerName" autocomplete="name" placeholder="Samuel Oak">
+                    <input type="text" name="playerName" autocomplete="name" placeholder="Samuel Oak">{{ name }}</input>
                 </label>
                 <label>
                     Player ID:
-                    <input type="text" name="playerId" placeholder="8675309">
+                    <input type="text" name="playerId" placeholder="8675309">{{ id }}</input>
                 </label>
                 <label>
                     Date of Birth:
-                    <input type="date" name="playerBirthday" autocomplete="bday">
+                    <input type="date" name="playerBirthday" autocomplete="bday">{{ birthday }}</input>
                 </label>
                 <label>
                     Decklist:
-                    <textarea name="decklist" placeholder="Paste a decklist from Pokémon Live or a decklist database. Ensure that your paper cards match the printings in your decklist, as they often differ.&#10;Put each card on its own line. Cards must be in this format:&#10;(Quantity) (Name) (Set Code) (Collector Number)&#10;Cards not formatted this way may be ignored or registered improperly. See decklist below for more examples.&#10;&#10;Pokémon: 5&#10;&#10;1 Exeggute JU 52&#10;4 Exeggutor JU 35&#10;&#10;Trainer: 12&#10;&#10;4 Bill BS 91&#10;4 Professor Oak BS 88&#10;4 Computer Search BS 71&#10;&#10;Energy: 43&#10;&#10;22 Grass Energy PAL 1&#10;21 Psychic Energy PAL 5"></textarea>
+                    <textarea name="decklist" placeholder="Paste a decklist from Pokémon Live or a decklist database. Ensure that your paper cards match the printings in your decklist, as they often differ.&#10;Put each card on its own line. Cards must be in this format:&#10;(Quantity) (Name) (Set Code) (Collector Number)&#10;Cards not formatted this way may be ignored or registered improperly. See decklist below for more examples.&#10;&#10;Pokémon: 5&#10;&#10;1 Exeggute JU 52&#10;4 Exeggutor JU 35&#10;&#10;Trainer: 12&#10;&#10;4 Bill BS 91&#10;4 Professor Oak BS 88&#10;4 Computer Search BS 71&#10;&#10;Energy: 43&#10;&#10;22 Grass Energy PAL 1&#10;21 Psychic Energy PAL 5">{{ decklist }}</textarea>
                 </label>
+                {% if error_messages is not none %}
+                    <output><strong>⚠ Warning</strong>
+                        {{ error_messages }}
+                    </output>
+                {% endif %}
                 <input type="submit" value="Generate Deck Registration Sheet">
             </form>
         </main>

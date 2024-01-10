@@ -1,11 +1,12 @@
 """Module containing pokemon card class"""
+
 import logging
 import re
 import sqlite3
 from functools import cached_property, total_ordering
 from pathlib import Path
-from pokemontcgsdk import Card
-
+from pokemontcgsdk import Card, RestClient
+from exceptions import CardError
 
 @total_ordering
 class CardInfo:
@@ -19,11 +20,8 @@ class CardInfo:
     legality = {"standard": None, "expanded": None}
     quantity = None
 
-    def __init__(
-        self, *, name=None, set_code=None, collector_number=None, regulation_mark=None,
-        supertype=None, quantity=None
-    ):
-        # set variables
+    def __init__(self, *, name=None, set_code=None, collector_number=None, regulation_mark=None,
+                 supertype=None, quantity=None):
         if name:
             self.name = str(name).strip().removeprefix("Basic ")
         if set_code:
@@ -34,10 +32,8 @@ class CardInfo:
                 "STS", "EVO", "DCR", "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
                 "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH", "RCL", "DAA", "VIV",
                 "BST", "CRE", "EVS", "FST", "BRS", "ASR", "LOR", "SIT", "CPA", "SHF", "CEL", "PGO",
-                "CRZ", "SVI", "PAL", "OBF", "PR", "SVP", "MCD"
+                "CRZ", "SVI", "PAL", "OBF", "MEW", "PAR", "PR", "SVP", "MCD", "ENERGY"
             ]
-            if self.set_code not in official_set_codes:
-                logging.warning("%s is not an official set code", self.set_code)
         if collector_number:
             self.collector_number = str(collector_number).strip().upper()
         if regulation_mark:
@@ -53,7 +49,7 @@ class CardInfo:
         ]
         if self.name in basic_energies:
             self.set_code = "ENERGY"
-        # ptcgl formats basic energy cards weird, we need to correct that
+        #ptcgl formats basic energy cards weird, we need to correct that
         if self.set_code == "ENERGY":
             energy_symbols = {
                 'G': "Grass", 'R': "Fire", 'W': "Water", 'L': "Lightning", 'P': "Psychic",
@@ -64,15 +60,21 @@ class CardInfo:
                                    f"{energy_name}", self.name)
             if not self.name.endswith(" Energy"):
                 self.name += " Energy"
-        # limitless formats promos weird, we need to correct that
+        #limitless formats promos weird, we need to correct that
         if self.set_code.startswith("PR-"):
-            self.collector_number = ''.join(
-                [self.set_code.split('-')[-1], self.collector_number.rjust(3, '0')])
-            self.set_code = "PR"
+            if self.set_code == "PR-SV":
+                self.set_code = "SVP"
+            else:
+                self.collector_number = ''.join(
+                    [self.set_code.split('-')[-1], self.collector_number.rjust(3, '0')])
+                self.set_code = "PR"
+        #throw error if set code is incorrect
+        if self.set_code not in official_set_codes:
+            raise CardError(f"{self.set_code} is not an official set code")
 
     def __eq__(self, other):
         if self.get_supertype == other.get_supertype:
-            if self.get_supertype == "Trainer" or self.get_supertype == "Energy":
+            if self.get_supertype in ("Trainer", "Energy"):
                 if self.get_name == other.get_name:
                     return True
             else:
@@ -118,27 +120,27 @@ class CardInfo:
             query = query_root + "name=? AND setCode=? AND collNo=?"
             query_data = [self.name, self.set_code, self.collector_number]
             if self.query_database(query, query_data):
-                return True
+                return
         if self.set_code and self.collector_number:
             query = query_root + "setCode=? AND collNo=?"
             query_data = [self.set_code, self.collector_number]
             if self.query_database(query, query_data):
-                return True
+                return
         if self.name and self.set_code:
             query = query_root + "name=? AND setCode=?"
             query_data = [self.name, self.set_code]
             if self.query_database(query, query_data):
-                return True
+                return
         if self.name:
             query = query_root + "name=?"
             query_data = [self.name]
             if self.query_database(query, query_data):
-                return True
+                return
         if self.name and self.set_code:
             query = query_root + "name=?"
             query_data = [' '.join([self.name, self.set_code])]
             if self.query_database(query, query_data):
-                return True
+                return
         # if we still haven't foind it locally, try the API
         api_success = self.lookup_from_api()
         # if it was found by the API, save it locally
@@ -155,7 +157,8 @@ class CardInfo:
             ))
             conn.commit()
             conn.close()
-        return api_success
+            return
+        raise CardError(f"Card not found: {self.name} {self.set_code} {self.collector_number}")
 
     def update_from_api(self, card):
         """Updates this object with information from remote card API"""
@@ -194,7 +197,14 @@ class CardInfo:
     def lookup_from_api(self):
         """Creates and runs queries to get card information from remote API"""
         # clean the data
-        set_ids = {"PR-SV": "svp", "SVI": "sv1", "PAL": "sv2", "OBF": "sv3"}
+        set_ids = {
+            "PR-SV": "svp",
+            "SVI": "sv1",
+            "PAL": "sv2",
+            "OBF": "sv3",
+            "MEW": "sv3pt5",
+            "PAR": "sv4"
+        }
         set_code = self.set_code
         if set_code in set_ids:
             set_code = set_ids[set_code]
@@ -204,6 +214,15 @@ class CardInfo:
         collector_number = self.collector_number
         if collector_number:
             collector_number = collector_number.lstrip("0")
+        #connect to API
+        try:
+            api_key_path = Path(__file__).parents[1].resolve() / "res" / "APIkey.txt"
+            with open(api_key_path, encoding="utf-8") as reader:
+                api_key = reader.read().strip()
+                # connect to API
+                RestClient.configure(api_key)
+        except OSError:
+            logging.warning("API key not found")
         # start querying API
         if self.name and set_code and collector_number:
             search = f'!name:"{self.name}" {set_search}:"{set_code}" number:{collector_number}'

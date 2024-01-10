@@ -42,13 +42,8 @@ form {
 }
 
 label,
-input,
-button {
-    vertical-align: top;
-}
-
-label,
-button {
+button,
+output {
     display: block;
     font-size: 1.1em;
 }
@@ -58,16 +53,21 @@ label {
 }
 
 input,
-textarea {
+textarea,
+output {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     color: oklch(0% 0 0);
-    background-color: oklch(100% 0 0);
-    border: 2px solid oklch(96% 0.2 110);
     border-radius: 10px;
     box-sizing: border-box;
     font: inherit;
+}
+
+input,
+textarea {
+    border: 2px solid oklch(96% 0.2 110);
+    background-color: oklch(100% 0 0);
 }
   
 input:focus,
@@ -75,7 +75,12 @@ textarea:focus {
     outline-color: oklch(47% 0.2 263);
     background-color: oklch(96% 0.2 110);
 }
-  
+
+output {
+    border: 2px solid oklch(68% 0.2 29);
+    white-space: pre-line;
+}
+
 textarea {
     resize: vertical;
     height: 45vh;
