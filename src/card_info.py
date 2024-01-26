@@ -32,7 +32,7 @@ class CardInfo:
                 "STS", "EVO", "DCR", "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
                 "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH", "RCL", "DAA", "VIV",
                 "BST", "CRE", "EVS", "FST", "BRS", "ASR", "LOR", "SIT", "CPA", "SHF", "CEL", "PGO",
-                "CRZ", "SVI", "PAL", "OBF", "MEW", "PAR", "PR", "SVP", "MCD", "ENERGY"
+                "CRZ", "SVI", "PAL", "OBF", "MEW", "PAR", "PAF", "PR", "SVP", "MCD", "ENERGY"
             ]
         if collector_number:
             self.collector_number = str(collector_number).strip().upper()
@@ -203,7 +203,8 @@ class CardInfo:
             "PAL": "sv2",
             "OBF": "sv3",
             "MEW": "sv3pt5",
-            "PAR": "sv4"
+            "PAR": "sv4",
+            "PAF": "sv4pt5"
         }
         set_code = self.set_code
         if set_code in set_ids:
