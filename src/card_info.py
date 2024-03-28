@@ -26,14 +26,6 @@ class CardInfo:
             self.name = str(name).strip().removeprefix("Basic ")
         if set_code:
             self.set_code = str(set_code).strip().upper()
-            official_set_codes = [
-                "BLW", "EPO", "NVI", "NXD", "DEX", "DRX", "BCR", "PLS", "PLF", "PLB", "LTR", "DRV",
-                "TK", "KSS", "XY", "FLF", "FFI", "PHF", "PRC", "ROS", "AOR", "BKT", "BKP", "FCO",
-                "STS", "EVO", "DCR", "GEN", "SUM", "GRI", "BUS", "CIN", "UPR", "FLI", "CES", "LOT",
-                "TEU", "UNB", "UNM", "CEC", "SLG", "DRM", "DET", "HIF", "SSH", "RCL", "DAA", "VIV",
-                "BST", "CRE", "EVS", "FST", "BRS", "ASR", "LOR", "SIT", "CPA", "SHF", "CEL", "PGO",
-                "CRZ", "SVI", "PAL", "OBF", "MEW", "PAR", "PAF", "PR", "SVP", "MCD", "ENERGY"
-            ]
         if collector_number:
             self.collector_number = str(collector_number).strip().upper()
         if regulation_mark:
@@ -68,9 +60,6 @@ class CardInfo:
                 self.collector_number = ''.join(
                     [self.set_code.split('-')[-1], self.collector_number.rjust(3, '0')])
                 self.set_code = "PR"
-        #throw error if set code is incorrect
-        if self.set_code not in official_set_codes:
-            raise CardError(f"{self.set_code} is not an official set code")
 
     def __eq__(self, other):
         if self.get_supertype == other.get_supertype:
@@ -197,21 +186,8 @@ class CardInfo:
     def lookup_from_api(self):
         """Creates and runs queries to get card information from remote API"""
         # clean the data
-        set_ids = {
-            "PR-SV": "svp",
-            "SVI": "sv1",
-            "PAL": "sv2",
-            "OBF": "sv3",
-            "MEW": "sv3pt5",
-            "PAR": "sv4",
-            "PAF": "sv4pt5"
-        }
         set_code = self.set_code
-        if set_code in set_ids:
-            set_code = set_ids[set_code]
-            set_search = 'set.id'
-        else:
-            set_search = 'set.ptcgoCode'
+        set_search = 'set.ptcgoCode'
         collector_number = self.collector_number
         if collector_number:
             collector_number = collector_number.lstrip("0")
