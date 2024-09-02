@@ -5,7 +5,7 @@ body {
     margin: 0;
     padding: 0;
     color: oklch(10% 0 0);
-    background-color: oklch(98% 0 0);
+    background-color: oklch(98% 0.01 263);
 }
   
 body::selection {
