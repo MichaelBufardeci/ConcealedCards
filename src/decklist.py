@@ -5,6 +5,7 @@ import re
 import logging
 from io import BytesIO
 from pathlib import Path
+from datetime import date
 from pypdf import PdfWriter, PdfReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -131,9 +132,13 @@ class Decklist:
             my_canvas.drawString(559, info_y, self.birthday["year"])
             # we still need to check the division box
             division_x = 385
-            if int(self.birthday["year"]) >= 2011:
+            # also we need to actually update when seasons change
+            juniors_year = date.today().year - 13
+            if date.today().month < 7:
+                juniors_year += 1
+            if int(self.birthday["year"]) >= juniors_year:
                 my_canvas.drawString(division_x, 685, '✓')
-            elif int(self.birthday["year"]) <= 2006:
+            elif int(self.birthday["year"]) <= juniors_year - 5:
                 my_canvas.drawString(division_x, 659, '✓')
             else:
                 my_canvas.drawString(division_x, 672, '✓')
